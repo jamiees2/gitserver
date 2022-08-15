@@ -27,8 +27,19 @@ func main() {
 
   http.Handle("/", service)
 
+  // maybe start TLS server
+  go func() {
+    tls_listener := os.Getenv("TLS")
+    if tls_listener != "" {
+      if err := http.ListenAndServeTLS(":5443", "/tls/tls.crt", "/tls/tls.key", nil); err != nil {
+        log.Fatal(err)
+      }
+    }
+  }()
+
   // Start HTTP server
   if err := http.ListenAndServe(":5000", nil); err != nil {
     log.Fatal(err)
   }
+  
 }
